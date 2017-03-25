@@ -1,27 +1,24 @@
 (ns calligrid.core
-  (:require [reagent.core :as reagent :refer [atom]]
-            [cljsjs.snapsvg]))
+  (:require [reagent.core :as reagent :refer [atom]]))
 
 (enable-console-print!)
 
 (defonce app-state (atom {:number-of-lines 7
                           :distance 30}))
 
-(defn greeting []
-  [:div
-    [:h1 (str "number of lines: " (:number-of-lines @app-state))]])
+(defn line [y]
+  [:line {:x1 0 :y1 y :x2 600 :y2 y :stroke "red" :stroke-width 5 :key y}])
 
-(defn draw-line [y]
-  (-> (js/Snap "#svg")
-      (.line 0 y 600 y)
-      (.attr (clj->js {:stroke "#F00" :strokeWidth 5}))))
+(defn lines [nol dist]
+  (for [y (range 5 (* nol dist) dist)]
+    (line y)))
 
-(defn draw []
+(defn page []
   (let [{:keys [number-of-lines distance]} @app-state]
-    (doseq [y (range 5 (* number-of-lines distance) distance)]
-      (draw-line y))))
+    [:div
+     [:h1 (str "number of lines: " number-of-lines)]
+     [:svg {:width 600 :height 800}
+      (lines number-of-lines distance)]]))
 
+(reagent/render [page] (js/document.getElementById "app"))
 
-(reagent/render [greeting] (js/document.getElementById "app"))
-
-(draw)

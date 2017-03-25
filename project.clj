@@ -13,7 +13,6 @@
                  [ring.middleware.logger "0.5.0"]
                  [compojure "1.5.0"]
                  [environ "1.0.3"]
-                 [cljsjs/snapsvg "0.4.1-0"]
                  [reagent "0.6.0-rc"]]
 
   :plugins [[lein-cljsbuild "1.1.3"]
