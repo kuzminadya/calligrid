@@ -4,12 +4,24 @@
 
 (enable-console-print!)
 
-(defonce app-state (atom {:text "Calligrid!"}))
+(defonce app-state (atom {:number-of-lines 7
+                          :distance 30}))
 
 (defn greeting []
   [:div
-    [:h1 (:text @app-state)]
-    [:svg#svg {:width 800 :height 600}]])
+    [:h1 (str "number of lines: " (:number-of-lines @app-state))]])
+
+(defn draw-line [y]
+  (-> (js/Snap "#svg")
+      (.line 0 y 600 y)
+      (.attr (clj->js {:stroke "#F00" :strokeWidth 5}))))
+
+(defn draw []
+  (let [{:keys [number-of-lines distance]} @app-state]
+    (doseq [y (range 5 (* number-of-lines distance) distance)]
+      (draw-line y))))
 
 
 (reagent/render [greeting] (js/document.getElementById "app"))
+
+(draw)
