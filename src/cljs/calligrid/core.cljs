@@ -12,15 +12,18 @@
 (defn lines [nol dist]
   (for [y (range 5 (* nol dist) dist)]
     (line y)))
-    
-(defn change-function [e] (.log js/console (.. e -target -value)))
 
-(defn slider-change [event] (.log js/console event))
+(defn change-number [event]
+  (swap! app-state assoc :number-of-lines (.. event -target -value)))
+
+(defn change-distance [event]
+  (swap! app-state assoc :distance (js/parseInt (.. event -target -value))))
 
 (defn page []
   (let [{:keys [number-of-lines distance]} @app-state]
     [:div
-     [:input {:type "range" :min 10 :max 30 :step 1 :on-change slider-change}]
+     [:input {:type "range" :min 10 :max 30 :step 1 :on-change change-number}]
+     [:input {:type "range" :min 10 :max 30 :step 1 :on-change change-distance}]
      [:h1 (str "number of lines: " number-of-lines)]
      [:svg {:width 600 :height 800}
       (lines number-of-lines distance)]]))
