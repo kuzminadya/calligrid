@@ -4,14 +4,23 @@
 (enable-console-print!)
 
 (defonce app-state (atom {:number-of-lines 10
-                          :distance 30}))
+                          :distance 50
+                          :ascender-height 20
+                          :descender-height 5
+                          :x-height 10}))
 
-(defn line [y]
-  [:line {:x1 0 :y1 y :x2 600 :y2 y :stroke "red" :stroke-width 5 :key y}])
+(defn line [y style]
+  (let [color (if (= style :baseline) "black" "gray")]
+    [:line {:x1 0 :y1 y :x2 600 :y2 y :stroke color :stroke-width 2 :key y}]))
 
 (defn lines [nol dist]
   (for [y (range 5 (* nol dist) dist)]
-    (line y)))
+    [:g
+      (line y :baseline)
+      (line (- y 20) :ascender)
+      (line (- y 12) :x-height)
+      (line (+ y 5) :descender)]))
+
 
 (defn change-number [event]
   (swap! app-state assoc :number-of-lines (.. event -target -value)))
@@ -23,7 +32,7 @@
   (let [{:keys [number-of-lines distance]} (rum.core/react app-state)]
     [:div
      [:input {:type "range" :min 10 :max 30 :step 1 :on-change change-number}]
-     [:input {:type "range" :min 10 :max 30 :step 1 :on-change change-distance}]
+     [:input {:type "range" :min 20 :max 80 :step 1 :on-change change-distance}]
      [:h1 (str "number of lines: " number-of-lines)]
      [:svg {:width 600 :height 800}
       (lines number-of-lines distance)]]))
