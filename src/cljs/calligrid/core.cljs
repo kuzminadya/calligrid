@@ -1,5 +1,5 @@
 (ns calligrid.core
-  (:require [reagent.core :as reagent :refer [atom]]))
+  (:require [rum.core :as rum]))
 
 (enable-console-print!)
 
@@ -19,8 +19,8 @@
 (defn change-distance [event]
   (swap! app-state assoc :distance (js/parseInt (.. event -target -value))))
 
-(defn page []
-  (let [{:keys [number-of-lines distance]} @app-state]
+(rum/defc page < rum/reactive []
+  (let [{:keys [number-of-lines distance]} (rum.core/react app-state)]
     [:div
      [:input {:type "range" :min 10 :max 30 :step 1 :on-change change-number}]
      [:input {:type "range" :min 10 :max 30 :step 1 :on-change change-distance}]
@@ -28,4 +28,4 @@
      [:svg {:width 600 :height 800}
       (lines number-of-lines distance)]]))
 
-(reagent/render [page] (js/document.getElementById "app"))
+(rum/mount (page) (js/document.getElementById "app"))
