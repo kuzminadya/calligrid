@@ -5,13 +5,24 @@
 
 (defonce app-state (atom {:number-of-lines 10
                           :distance 50
-                          :ascender-height 20
-                          :descender-height 5
-                          :x-height 10}))
+                          :ascender-height 10
+                          :descender-height 10
+                          :x-height 20}))
+
+(defn mousedown [e] (.log js/console "down: " (-> e .-screenX)))
+(defn ondrag [e] (.log js/console "drag: " (-> e .-screenX)))
 
 (defn line [y style]
-  (let [color (if (= style :baseline) "black" "gray")]
-    [:line {:x1 0 :y1 y :x2 600 :y2 y :stroke color :stroke-width 2 :key y}]))
+  (let [baseline? (= style :baseline)
+        color (if baseline? "black" "gray")]
+    [:g
+      (when baseline? [:circle {:cx 5
+                                :cy y
+                                :r 5
+                                :on-drag #(ondrag %)
+                                :on-mouse-down #(mousedown %)}])
+
+      [:line {:x1 0 :y1 y :x2 600 :y2 y :stroke color :stroke-width 2 :key y}]]))
 
 (defn lines [nol dist]
   (for [y (range 5 (* nol dist) dist)]
@@ -20,7 +31,6 @@
       (line (- y 20) :ascender)
       (line (- y 12) :x-height)
       (line (+ y 5) :descender)]))
-
 
 (defn change-number [event]
   (swap! app-state assoc :number-of-lines (.. event -target -value)))

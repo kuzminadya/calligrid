@@ -15,3 +15,5 @@
   (figwheel/start-figwheel!))
 
 (def browser-repl figwheel/cljs-repl)
+
+(def nadja 3)
