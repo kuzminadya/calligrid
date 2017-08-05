@@ -14,15 +14,17 @@
 
 (defn line [y style]
   (let [baseline? (= style :baseline)
+        line-class (if baseline? "baseline" "normal-line")
         color (if baseline? "black" "gray")]
-    [:g
+    [:g {:class line-class
+         :draggable true
+         :on-drag-start #(ondrag %)}
       (when baseline? [:circle {:cx 5
                                 :cy y
-                                :r 5
-                                :on-drag #(ondrag %)
-                                :on-mouse-down #(mousedown %)}])
+                                :r 5}])
 
-      [:line {:x1 0 :y1 y :x2 600 :y2 y :stroke color :stroke-width 2 :key y}]]))
+      [:line {:x1 0 :y1 y :x2 600 :y2 y :stroke color :stroke-width 2 :key y}]
+      ]))
 
 (defn lines [nol dist]
   (for [y (range 5 (* nol dist) dist)]
